@@ -1,0 +1,29 @@
+name "bindbc-freeimage"
+description "Dynamic and static bindings to FreeImage, compatible with -betterC, @nogc, and nothrow."
+homepage ""
+authors "Mike Parker"
+license "Boost"
+
+targetType "staticLibrary"
+targetPath "lib"
+targetName "BindBC_FI"
+
+configuration "dynamic" {
+    dependency "bindbc-loader" version="~>0.1.0"
+}
+
+configuration "dynamicBC" {
+    dependency "bindbc-loader" version="~>0.1.0"
+    subConfiguration "bindbc-loader" "yesBC"
+}
+
+configuration "static" {
+    versions "BindFI_Static"
+    excludedSourceFiles "source/bindbc/freeimage/binddynamic.d"
+}
+
+configuration "staticBC" {
+    dflags "-betterC"
+    versions "BindFI_Static"
+    excludedSourceFiles "source/bindbc/freeimage/binddynamic.d"
+}
