@@ -888,7 +888,8 @@ FISupport loadFreeImage(const(char)* libName)
     lib.bindSymbol_stdcall(FreeImage_AllocateExT, "FreeImage_AllocateExT");
     lib.bindSymbol_stdcall(FreeImage_MultigridPoissonSolver, "FreeImage_MultigridPoissonSolver");
 
-    loadedVersion = FISupport.fi317;
+    if(errorCount() != errCount) return FISupport.badLibrary;
+    else loadedVersion = FISupport.fi317;
 
     static if(fiSupport >= FISupport.fi318) {
         lib.bindSymbol_stdcall(FreeImage_Validate, "FreeImage_Validate");
@@ -899,9 +900,9 @@ FISupport loadFreeImage(const(char)* libName)
         lib.bindSymbol_stdcall(FreeImage_ConvertLine4To32MapTransparency, "FreeImage_ConvertLine4To32MapTransparency");
         lib.bindSymbol_stdcall(FreeImage_ConvertLine8To32MapTransparency, "FreeImage_ConvertLine8To32MapTransparency");
 
-        loadedVersion = FISupport.fi318;
+        if(errorCount() != errCount) return FISupport.badLibrary;
+        else loadedVersion = FISupport.fi318;
     }
 
-    if(errorCount() != errCount) return FISupport.badLibrary;
     return loadedVersion;
 }
