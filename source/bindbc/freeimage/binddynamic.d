@@ -6,7 +6,7 @@
 
 module bindbc.freeimage.binddynamic;
 
-version(BindGLFW_Static) {}
+version(BindFI_Static) {}
 else version = BindFI_Dynamic;
 
 version(BindFI_Dynamic):
