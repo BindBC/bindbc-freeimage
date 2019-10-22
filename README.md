@@ -1,5 +1,5 @@
 # bindbc-freeimage
-This project provides both static and dynamic bindings to the [FreeImage library](http://freeimage.sourceforge.net/download.html). They are `@nogc` and `nothrow` compatible can be compiled for compatibility with `-betterC`. This package is intended as a replacement of [DerelictFI](https://github.com/DerelictOrg/DerelictFI), which is not compatible with `@nogc`,  `nothrow`, or `-betterC`.
+This project provides both static and dynamic bindings to the [FreeImage library](http://freeimage.sourceforge.net/download.html). They are `@nogc` and `nothrow` compatible and can be compiled for compatibility with `-betterC`. This package is intended as a replacement of [DerelictFI](https://github.com/DerelictOrg/DerelictFI), which is not compatible with `@nogc`,  `nothrow`, or `-betterC`.
 
 ## Usage
 By default, `bindbc-freeimage` is configured to compile as a dynamic binding that is not `-betterC` compatible. The dynamic binding has no link-time dependency on the FreeImage library, so the FreeImage shared library must be manually loaded at runtime. When configured as a static binding, there is a link-time dependency on the FreeImage library---either the static library or the appropriate file for linking with shared libraries on your platform (see below).
