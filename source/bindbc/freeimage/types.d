@@ -109,14 +109,14 @@ align(1) struct BITMAPINFOHEADER {
     DWORD biClrImportant;
 }
 
-alias BITMAPINFOHEADER* PBITMAPINFOHEADER;
+alias PBITMAPINFOHEADER = BITMAPINFOHEADER*;
 
 align(1) struct BITMAPINFO {
     BITMAPINFOHEADER bmiHeader;
     RGBQUAD[1] bmiColors;
 }
 
-alias BITMAPINFO* PBITMAPINFO;
+alias PBITMAPINFO = BITMAPINFO*;
 
 align(1) struct FIRGB16 {
     WORD red;
@@ -254,8 +254,7 @@ struct FIICCPROFILE {
     void  *data;    // points to a block of contiguous memory containing the profile
 }
 
-alias int FREE_IMAGE_FORMAT;
-enum : FREE_IMAGE_FORMAT {
+enum FREE_IMAGE_FORMAT {
     FIF_UNKNOWN = -1,
     FIF_BMP     = 0,
     FIF_ICO     = 1,
@@ -297,9 +296,9 @@ enum : FREE_IMAGE_FORMAT {
     FIF_WEBP    = 35,
     FFI_JXR     = 36,
 }
+mixin(expandEnum!FREE_IMAGE_FORMAT);
 
-alias int FREE_IMAGE_TYPE;
-enum : FREE_IMAGE_TYPE {
+enum FREE_IMAGE_TYPE {
     FIT_UNKNOWN = 0,
     FIT_BITMAP  = 1,
     FIT_UINT16  = 2,
@@ -314,9 +313,9 @@ enum : FREE_IMAGE_TYPE {
     FIT_RGBF    = 11,
     FIT_RGBAF   = 12
 }
+mixin(expandEnum!FREE_IMAGE_TYPE);
 
-alias int FREE_IMAGE_COLOR_TYPE;
-enum : FREE_IMAGE_COLOR_TYPE {
+enum FREE_IMAGE_COLOR_TYPE {
     FIC_MINISWHITE = 0,
     FIC_MINISBLACK = 1,
     FIC_RGB        = 2,
@@ -324,15 +323,15 @@ enum : FREE_IMAGE_COLOR_TYPE {
     FIC_RGBALPHA   = 4,
     FIC_CMYK       = 5
 }
+mixin(expandEnum!FREE_IMAGE_COLOR_TYPE);
 
-alias int FREE_IMAGE_QUANTIZE;
-enum : FREE_IMAGE_QUANTIZE {
+enum FREE_IMAGE_QUANTIZE {
     FIQ_WUQUANT = 0,
     FIQ_NNQUANT = 1
 }
+mixin(expandEnum!FREE_IMAGE_QUANTIZE);
 
-alias int FREE_IMAGE_DITHER;
-enum : FREE_IMAGE_DITHER {
+enum FREE_IMAGE_DITHER {
     FID_FS          = 0,
     FID_BAYER4x4    = 1,
     FID_BAYER8x8    = 2,
@@ -341,10 +340,9 @@ enum : FREE_IMAGE_DITHER {
     FID_CLUSTER16x16= 5,
     FID_BAYER16x16  = 6
 }
+mixin(expandEnum!FREE_IMAGE_DITHER);
 
-alias int FREE_IMAGE_JPEG_OPERATION;
-enum : FREE_IMAGE_JPEG_OPERATION
-{
+enum FREE_IMAGE_JPEG_OPERATION {
     FIJPEG_OP_NONE          = 0,
     FIJPEG_OP_FLIP_H        = 1,
     FIJPEG_OP_FLIP_V        = 2,
@@ -354,16 +352,16 @@ enum : FREE_IMAGE_JPEG_OPERATION
     FIJPEG_OP_ROTATE_180    = 6,
     FIJPEG_OP_ROTATE_270    = 7
 }
+mixin(expandEnum!FREE_IMAGE_JPEG_OPERATION);
 
-alias int FREE_IMAGE_TMO;
-enum : FREE_IMAGE_TMO {
+enum FREE_IMAGE_TMO {
     FITMO_DRAGO03    = 0,
     FITMO_REINHARD05 = 1,
     FITMO_FATTAL02   = 2
 }
+mixin(expandEnum!FREE_IMAGE_TMO);
 
-alias int FREE_IMAGE_FILTER;
-enum : FREE_IMAGE_FILTER {
+enum FREE_IMAGE_FILTER {
     FILTER_BOX        = 0,
     FILTER_BICUBIC    = 1,
     FILTER_BILINEAR   = 2,
@@ -371,9 +369,9 @@ enum : FREE_IMAGE_FILTER {
     FILTER_CATMULLROM = 4,
     FILTER_LANCZOS3   = 5
 }
+mixin(expandEnum!FREE_IMAGE_FILTER);
 
-alias int FREE_IMAGE_COLOR_CHANNEL;
-enum : FREE_IMAGE_COLOR_CHANNEL
+enum FREE_IMAGE_COLOR_CHANNEL
 {
     FICC_RGB    = 0,
     FICC_RED    = 1,
@@ -386,9 +384,9 @@ enum : FREE_IMAGE_COLOR_CHANNEL
     FICC_MAG    = 8,
     FICC_PHASE  = 9
 }
+mixin(expandEnum!FREE_IMAGE_COLOR_CHANNEL);
 
-alias int FREE_IMAGE_MDTYPE;
-enum : FREE_IMAGE_MDTYPE {
+enum FREE_IMAGE_MDTYPE {
     FIDT_NOTYPE     = 0,
     FIDT_BYTE       = 1,
     FIDT_ASCII      = 2,
@@ -409,9 +407,9 @@ enum : FREE_IMAGE_MDTYPE {
     FIDT_SLONG8     = 17,
     FIDT_IFD8       = 18
 }
+mixin(expandEnum!FREE_IMAGE_MDTYPE);
 
-alias int FREE_IMAGE_MDMODEL;
-enum : FREE_IMAGE_MDMODEL {
+enum FREE_IMAGE_MDMODEL {
     FIMD_NODATA         = -1,
     FIMD_COMMENTS       = 0,
     FIMD_EXIF_MAIN      = 1,
@@ -426,8 +424,9 @@ enum : FREE_IMAGE_MDMODEL {
     FIMD_CUSTOM         = 10,
     FIMD_EXIF_RAW       = 11
 }
+mixin(expandEnum!FREE_IMAGE_MDMODEL);
 
-alias void* fi_handle;
+alias fi_handle =  void*;
 extern(System) nothrow {
     alias FI_ReadProc = uint function(void *buffer, uint size, uint count, fi_handle handle);
     alias FI_WriteProc = uint function(void *buffer, uint size, uint count, fi_handle handle);
@@ -608,3 +607,13 @@ enum {
 
 extern(C) nothrow alias FreeImage_OutputMessageFunction = void function(FREE_IMAGE_FORMAT fif, const(char)* msg);
 extern(Windows) nothrow alias FreeImage_OutputMessageFunctionStdCall = void function(FREE_IMAGE_FORMAT fif, const(char)* msg);
+
+private:
+enum expandEnum(EnumType, string fqnEnumType = EnumType.stringof) = (){
+    string expandEnum = "enum {";
+    foreach(m;__traits(allMembers, EnumType)) {
+        expandEnum ~= m ~ " = " ~ fqnEnumType ~ "." ~ m ~ ",";
+    }
+    expandEnum  ~= "}";
+    return expandEnum;
+}();
