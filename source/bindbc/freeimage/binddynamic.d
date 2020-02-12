@@ -315,15 +315,15 @@ extern(System) @nogc nothrow {
 
     alias pFreeImage_MultigridPoissonSolver = FIBITMAP* function(FIBITMAP*,int ncycle = 3);
 
-	static if(fiSupport >= FISupport.fi318) {
-		alias pFreeImage_Validate = BOOL function(FREE_IMAGE_FORMAT,const(char)*);
-		alias pFreeImage_ValidateU = BOOL function(FREE_IMAGE_FORMAT,const(wchar_t)*);
-		alias pFreeImage_ValidateFromHandle = BOOL function(FREE_IMAGE_FORMAT,FreeImageIO*,fi_handle);
-		alias pFreeImage_ValidateFromMemory = BOOL function(FREE_IMAGE_FORMAT,FIMEMORY);
-		alias pFreeImage_ConvertLine1To32MapTransparency = void function(BYTE*,BYTE*,int,RGBQUAD*,BYTE*,int);
-		alias pFreeImage_ConvertLine4To32MapTransparency = void function(BYTE*,BYTE*,int,RGBQUAD*,BYTE*,int);
-		alias pFreeImage_ConvertLine8To32MapTransparency = void function(BYTE*,BYTE*,int,RGBQUAD*,BYTE*,int);
-	}
+    static if(fiSupport >= FISupport.fi318) {
+        alias pFreeImage_Validate = BOOL function(FREE_IMAGE_FORMAT,const(char)*);
+        alias pFreeImage_ValidateU = BOOL function(FREE_IMAGE_FORMAT,const(wchar_t)*);
+        alias pFreeImage_ValidateFromHandle = BOOL function(FREE_IMAGE_FORMAT,FreeImageIO*,fi_handle);
+        alias pFreeImage_ValidateFromMemory = BOOL function(FREE_IMAGE_FORMAT,FIMEMORY);
+        alias pFreeImage_ConvertLine1To32MapTransparency = void function(BYTE*,BYTE*,int,RGBQUAD*,BYTE*,int);
+        alias pFreeImage_ConvertLine4To32MapTransparency = void function(BYTE*,BYTE*,int,RGBQUAD*,BYTE*,int);
+        alias pFreeImage_ConvertLine8To32MapTransparency = void function(BYTE*,BYTE*,int,RGBQUAD*,BYTE*,int);
+    }
 }
 
 __gshared {
@@ -577,14 +577,14 @@ __gshared {
     pFreeImage_MultigridPoissonSolver FreeImage_MultigridPoissonSolver;
 
     static if(fiSupport >= FISupport.fi318) {
-		pFreeImage_Validate FreeImage_Validate;
-		pFreeImage_ValidateU FreeImage_ValidateU;
-		pFreeImage_ValidateFromHandle FreeImage_ValidateFromHandle;
-		pFreeImage_ValidateFromMemory FreeImage_ValidateFromMemory;
+        pFreeImage_Validate FreeImage_Validate;
+        pFreeImage_ValidateU FreeImage_ValidateU;
+        pFreeImage_ValidateFromHandle FreeImage_ValidateFromHandle;
+        pFreeImage_ValidateFromMemory FreeImage_ValidateFromMemory;
         pFreeImage_ConvertLine1To32MapTransparency FreeImage_ConvertLine1To32MapTransparency;
         pFreeImage_ConvertLine4To32MapTransparency FreeImage_ConvertLine4To32MapTransparency;
         pFreeImage_ConvertLine8To32MapTransparency FreeImage_ConvertLine8To32MapTransparency;
-	}
+    }
 
 }
 
@@ -846,14 +846,23 @@ FISupport loadFreeImage(const(char)* libName)
     lib.bindSymbol_stdcall(FreeImage_GetMetadataCount, "FreeImage_GetMetadataCount");
     lib.bindSymbol_stdcall(FreeImage_CloneMetadata, "FreeImage_CloneMetadata");
     lib.bindSymbol_stdcall(FreeImage_TagToString, "FreeImage_TagToString");
-    lib.bindSymbol_stdcall(FreeImage_JPEGTransform, "FreeImage_JPEGTransform");
-    lib.bindSymbol_stdcall(FreeImage_JPEGTransformU, "FreeImage_JPEGTransformU");
-    lib.bindSymbol_stdcall(FreeImage_JPEGCrop, "FreeImage_JPEGCrop");
-    lib.bindSymbol_stdcall(FreeImage_JPEGCropU, "FreeImage_JPEGCropU");
-    lib.bindSymbol_stdcall(FreeImage_JPEGTransformFromHandle, "FreeImage_JPEGTransformFromHandle");
-    lib.bindSymbol_stdcall(FreeImage_JPEGTransformCombined, "FreeImage_JPEGTransformCombined");
-    lib.bindSymbol_stdcall(FreeImage_JPEGTransformCombinedU, "FreeImage_JPEGTransformCombinedU");
-    lib.bindSymbol_stdcall(FreeImage_JPEGTransformCombinedFromMemory, "FreeImage_JPEGTransformCombinedFromMemory");
+    // The JPEGTransform functions are deliberately disabled in Debian build
+    // of FreeImage, since they require usage of the vendored copy of libjpeg.
+    // Add the following in dub.json:
+    //    "versions": ["BindBC_Debian"]
+    // or in dub.sdl:
+    //    versions "BindBC_Debian"
+    version(BindBC_Debian) {
+    } else {
+        lib.bindSymbol_stdcall(FreeImage_JPEGTransform, "FreeImage_JPEGTransform");
+        lib.bindSymbol_stdcall(FreeImage_JPEGTransformU, "FreeImage_JPEGTransformU");
+        lib.bindSymbol_stdcall(FreeImage_JPEGCrop, "FreeImage_JPEGCrop");
+        lib.bindSymbol_stdcall(FreeImage_JPEGCropU, "FreeImage_JPEGCropU");
+        lib.bindSymbol_stdcall(FreeImage_JPEGTransformFromHandle, "FreeImage_JPEGTransformFromHandle");
+        lib.bindSymbol_stdcall(FreeImage_JPEGTransformCombined, "FreeImage_JPEGTransformCombined");
+        lib.bindSymbol_stdcall(FreeImage_JPEGTransformCombinedU, "FreeImage_JPEGTransformCombinedU");
+        lib.bindSymbol_stdcall(FreeImage_JPEGTransformCombinedFromMemory, "FreeImage_JPEGTransformCombinedFromMemory");
+    }
     lib.bindSymbol_stdcall(FreeImage_Rotate, "FreeImage_Rotate");
     lib.bindSymbol_stdcall(FreeImage_RotateEx, "FreeImage_RotateEx");
     lib.bindSymbol_stdcall(FreeImage_FlipHorizontal, "FreeImage_FlipHorizontal");
