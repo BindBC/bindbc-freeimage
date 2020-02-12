@@ -263,16 +263,19 @@ extern(System) @nogc nothrow {
 
     alias pFreeImage_TagToString = const(char)* function(FREE_IMAGE_MDMODEL,FITAG*,char* Make = null);
 
-    alias pFreeImage_JPEGTransform = BOOL function(const(char)*,const(char)*, FREE_IMAGE_JPEG_OPERATION,BOOL perfect=TRUE);
-    alias pFreeImage_JPEGTransformU = BOOL function(const(wchar_t)*,const(wchar_t)*, FREE_IMAGE_JPEG_OPERATION,BOOL perfect=TRUE);
-    alias pFreeImage_JPEGCrop = BOOL function(const(char)*,const(char)*,int,int,int,int);
-    alias pFreeImage_JPEGCropU = BOOL function(const(wchar_t)*,const(wchar_t)*,int,int,int,int);
+    version(BindFI_JPEGTransform) {}
+    else {
+        alias pFreeImage_JPEGTransform = BOOL function(const(char)*,const(char)*, FREE_IMAGE_JPEG_OPERATION,BOOL perfect=TRUE);
+        alias pFreeImage_JPEGTransformU = BOOL function(const(wchar_t)*,const(wchar_t)*, FREE_IMAGE_JPEG_OPERATION,BOOL perfect=TRUE);
+        alias pFreeImage_JPEGCrop = BOOL function(const(char)*,const(char)*,int,int,int,int);
+        alias pFreeImage_JPEGCropU = BOOL function(const(wchar_t)*,const(wchar_t)*,int,int,int,int);
 
-    // FreeImage 3.16.0 -- 4 functions
-    alias pFreeImage_JPEGTransformFromHandle = BOOL function(FreeImageIO*,fi_handle,FreeImageIO*,fi_handle,FREE_IMAGE_JPEG_OPERATION,int*,int*,int*,int*,BOOL perfect=TRUE);
-    alias pFreeImage_JPEGTransformCombined = BOOL function(const(char)*,const(char)*,FREE_IMAGE_JPEG_OPERATION,int*,int*,int*,int*,BOOL perfect=TRUE);
-    alias pFreeImage_JPEGTransformCombinedU = BOOL function(const(wchar_t)*,const(wchar_t)*,FREE_IMAGE_JPEG_OPERATION,int*,int*,int*,int*,BOOL perfect=TRUE);
-    alias pFreeImage_JPEGTransformCombinedFromMemory = BOOL function(FIMEMORY*,FIMEMORY*,FREE_IMAGE_JPEG_OPERATION,int*,int*,int*,int*,BOOL perfect=TRUE);
+        // FreeImage 3.16.0 -- 4 functions
+        alias pFreeImage_JPEGTransformFromHandle = BOOL function(FreeImageIO*,fi_handle,FreeImageIO*,fi_handle,FREE_IMAGE_JPEG_OPERATION,int*,int*,int*,int*,BOOL perfect=TRUE);
+        alias pFreeImage_JPEGTransformCombined = BOOL function(const(char)*,const(char)*,FREE_IMAGE_JPEG_OPERATION,int*,int*,int*,int*,BOOL perfect=TRUE);
+        alias pFreeImage_JPEGTransformCombinedU = BOOL function(const(wchar_t)*,const(wchar_t)*,FREE_IMAGE_JPEG_OPERATION,int*,int*,int*,int*,BOOL perfect=TRUE);
+        alias pFreeImage_JPEGTransformCombinedFromMemory = BOOL function(FIMEMORY*,FIMEMORY*,FREE_IMAGE_JPEG_OPERATION,int*,int*,int*,int*,BOOL perfect=TRUE);
+    }
 
     alias pFreeImage_Rotate = FIBITMAP* function(FIBITMAP*,double, const(void*) = null);
     alias pFreeImage_RotateEx = FIBITMAP* function(FIBITMAP*,double,double,double,double,double,BOOL);
@@ -534,14 +537,16 @@ __gshared {
     pFreeImage_GetMetadataCount FreeImage_GetMetadataCount;
     pFreeImage_CloneMetadata FreeImage_CloneMetadata;
     pFreeImage_TagToString FreeImage_TagToString;
-    pFreeImage_JPEGTransform FreeImage_JPEGTransform;
-    pFreeImage_JPEGTransformU FreeImage_JPEGTransformU;
-    pFreeImage_JPEGCrop FreeImage_JPEGCrop;
-    pFreeImage_JPEGCropU FreeImage_JPEGCropU;
-    pFreeImage_JPEGTransformFromHandle FreeImage_JPEGTransformFromHandle;
-    pFreeImage_JPEGTransformCombined FreeImage_JPEGTransformCombined;
-    pFreeImage_JPEGTransformCombinedU FreeImage_JPEGTransformCombinedU;
-    pFreeImage_JPEGTransformCombinedFromMemory FreeImage_JPEGTransformCombinedFromMemory;
+    version(BindFI_JPEGTransform) {
+        pFreeImage_JPEGTransform FreeImage_JPEGTransform;
+        pFreeImage_JPEGTransformU FreeImage_JPEGTransformU;
+        pFreeImage_JPEGCrop FreeImage_JPEGCrop;
+        pFreeImage_JPEGCropU FreeImage_JPEGCropU;
+        pFreeImage_JPEGTransformFromHandle FreeImage_JPEGTransformFromHandle;
+        pFreeImage_JPEGTransformCombined FreeImage_JPEGTransformCombined;
+        pFreeImage_JPEGTransformCombinedU FreeImage_JPEGTransformCombinedU;
+        pFreeImage_JPEGTransformCombinedFromMemory FreeImage_JPEGTransformCombinedFromMemory;
+    }
     pFreeImage_Rotate FreeImage_Rotate;
     pFreeImage_RotateEx FreeImage_RotateEx;
     pFreeImage_FlipHorizontal FreeImage_FlipHorizontal;
@@ -846,13 +851,8 @@ FISupport loadFreeImage(const(char)* libName)
     lib.bindSymbol_stdcall(FreeImage_GetMetadataCount, "FreeImage_GetMetadataCount");
     lib.bindSymbol_stdcall(FreeImage_CloneMetadata, "FreeImage_CloneMetadata");
     lib.bindSymbol_stdcall(FreeImage_TagToString, "FreeImage_TagToString");
-    // The JPEGTransform functions are deliberately disabled in Debian build
-    // of FreeImage, since they require usage of the vendored copy of libjpeg.
-    // Add the following in dub.json:
-    //    "versions": ["BindBC_Debian"]
-    // or in dub.sdl:
-    //    versions "BindBC_Debian"
-    version(BindBC_Debian) {
+
+    version(BindFI_JPEGTransform) {
     } else {
         lib.bindSymbol_stdcall(FreeImage_JPEGTransform, "FreeImage_JPEGTransform");
         lib.bindSymbol_stdcall(FreeImage_JPEGTransformU, "FreeImage_JPEGTransformU");

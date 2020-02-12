@@ -220,14 +220,18 @@ extern(System) @nogc nothrow {
 	uint FreeImage_GetMetadataCount(FREE_IMAGE_MDMODEL,FIBITMAP*);
 	BOOL FreeImage_CloneMetadata(FIBITMAP*,FIBITMAP*);
 	const(char)* FreeImage_TagToString(FREE_IMAGE_MDMODEL,FITAG*,char* = null);
-	BOOL FreeImage_JPEGTransform(const(char)*,const(char)*,FREE_IMAGE_JPEG_OPERATION,BOOL perfect=TRUE);
-	BOOL FreeImage_JPEGTransformU(const(wchar_t)*,const(wchar_t)*,FREE_IMAGE_JPEG_OPERATION,BOOL perfect=TRUE);
-	BOOL FreeImage_JPEGCrop(const(char)*,const(char)*,int,int,int,int);
-	BOOL FreeImage_JPEGCropU(const(wchar_t)*,const(wchar_t)*,int,int,int,int);
-	BOOL FreeImage_JPEGTransformFromHandle(FreeImageIO*,fi_handle,FreeImageIO*,fi_handle,FREE_IMAGE_JPEG_OPERATION,int*,int*,int*,int*,BOOL perfect=TRUE);
-	BOOL FreeImage_JPEGTransformCombined(const(char)*,const(char)*,FREE_IMAGE_JPEG_OPERATION,int*,int*,int*,int*,BOOL perfect=TRUE);
-	BOOL FreeImage_JPEGTransformCombinedU(const(wchar_t)*,const(wchar_t)*,FREE_IMAGE_JPEG_OPERATION,int*,int*,int*,int*,BOOL perfect=TRUE);
-	BOOL FreeImage_JPEGTransformCombinedFromMemory(FIMEMORY*,FIMEMORY*,FREE_IMAGE_JPEG_OPERATION,int*,int*,int*,int*,BOOL perfect=TRUE);
+
+	version(BindFI_JPEGTransform) {
+		BOOL FreeImage_JPEGTransform(const(char)*,const(char)*,FREE_IMAGE_JPEG_OPERATION,BOOL perfect=TRUE);
+		BOOL FreeImage_JPEGTransformU(const(wchar_t)*,const(wchar_t)*,FREE_IMAGE_JPEG_OPERATION,BOOL perfect=TRUE);
+		BOOL FreeImage_JPEGCrop(const(char)*,const(char)*,int,int,int,int);
+		BOOL FreeImage_JPEGCropU(const(wchar_t)*,const(wchar_t)*,int,int,int,int);
+		BOOL FreeImage_JPEGTransformFromHandle(FreeImageIO*,fi_handle,FreeImageIO*,fi_handle,FREE_IMAGE_JPEG_OPERATION,int*,int*,int*,int*,BOOL perfect=TRUE);
+		BOOL FreeImage_JPEGTransformCombined(const(char)*,const(char)*,FREE_IMAGE_JPEG_OPERATION,int*,int*,int*,int*,BOOL perfect=TRUE);
+		BOOL FreeImage_JPEGTransformCombinedU(const(wchar_t)*,const(wchar_t)*,FREE_IMAGE_JPEG_OPERATION,int*,int*,int*,int*,BOOL perfect=TRUE);
+		BOOL FreeImage_JPEGTransformCombinedFromMemory(FIMEMORY*,FIMEMORY*,FREE_IMAGE_JPEG_OPERATION,int*,int*,int*,int*,BOOL perfect=TRUE);
+	}
+
 	FIBITMAP* FreeImage_Rotate(FIBITMAP*,double angle,const(void*) bkcolor = null);
 	FIBITMAP* FreeImage_RotateEx(FIBITMAP*,double,double,double,double,double,BOOL);
 	BOOL FreeImage_FlipHorizontal(FIBITMAP*);

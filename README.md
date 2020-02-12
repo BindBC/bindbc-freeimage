@@ -169,3 +169,31 @@ libs "freeimage"
 ```
 
 When not using DUB to manage your project, first use DUB to compile the BindBC libraries with the `dynamicBC` or `staticBC` configuration, then pass `-betterC` to the compiler when building your project.
+
+## Support for the `JPEGTransform*` functions
+
+On some platforms, the following functions may be disabled by default in the binaries distributed via the system package manager:
+
+* `FreeImage_JPEGTransform`
+* `FreeImage_JPEGTransformU`
+* `FreeImage_JPEGCrop`
+* `FreeImage_JPEGCropU`
+* `FreeImage_JPEGTransformFromHandle`
+* `FreeImage_JPEGTransformCombined`
+* `FreeImage_JPEGTransformCombinedU`
+* `FreeImage_JPEGTransformCombinedFromMemory`
+
+If your application requires these functions, there are few steps to take. First, add the version `BindFI_JPEGTransform` to your DUB package configuration or compiler command line.
+
+__dub.json__
+```
+"versions": ["BindFI_JPEGTransform"],
+```
+```
+__dub.sdl__
+versions "BindFI_JPEGTransform"
+```
+
+Next, either ship your application with a version of the FreeImage shared library that supports these functions or inform your users they'll need to compile or install a version that does.
+
+Finally, for robustness you'll want to use the `bindbc-loader` error handling API to filter any errors that arise when these functions are missing so that you may present an error message to your users informing them how to install a properly compiled version of the FreeImage shared library.
