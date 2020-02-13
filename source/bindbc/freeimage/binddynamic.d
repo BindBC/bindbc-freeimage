@@ -263,8 +263,7 @@ extern(System) @nogc nothrow {
 
     alias pFreeImage_TagToString = const(char)* function(FREE_IMAGE_MDMODEL,FITAG*,char* Make = null);
 
-    version(BindFI_JPEGTransform) {}
-    else {
+    version(BindFI_JPEGTransform) {
         alias pFreeImage_JPEGTransform = BOOL function(const(char)*,const(char)*, FREE_IMAGE_JPEG_OPERATION,BOOL perfect=TRUE);
         alias pFreeImage_JPEGTransformU = BOOL function(const(wchar_t)*,const(wchar_t)*, FREE_IMAGE_JPEG_OPERATION,BOOL perfect=TRUE);
         alias pFreeImage_JPEGCrop = BOOL function(const(char)*,const(char)*,int,int,int,int);
@@ -853,7 +852,6 @@ FISupport loadFreeImage(const(char)* libName)
     lib.bindSymbol_stdcall(FreeImage_TagToString, "FreeImage_TagToString");
 
     version(BindFI_JPEGTransform) {
-    } else {
         lib.bindSymbol_stdcall(FreeImage_JPEGTransform, "FreeImage_JPEGTransform");
         lib.bindSymbol_stdcall(FreeImage_JPEGTransformU, "FreeImage_JPEGTransformU");
         lib.bindSymbol_stdcall(FreeImage_JPEGCrop, "FreeImage_JPEGCrop");
