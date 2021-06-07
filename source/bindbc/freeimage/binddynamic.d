@@ -597,6 +597,8 @@ private {
     FISupport loadedVersion;
 }
 
+@nogc nothrow:
+
 FISupport loadedFreeImageVersion() { return loadedVersion; }
 bool isFreeImageLoaded() { return lib != invalidHandle; }
 
