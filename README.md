@@ -50,6 +50,7 @@ if(ret != fiSupport) {
         // One or more symbols failed to load. The likely cause is that the
         // shared library is for a lower version than bindbc-freeimage was configured
         // to load.
+    }
 }
 
 /*
