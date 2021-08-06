@@ -2,28 +2,28 @@
 This project provides both static and dynamic bindings to the [FreeImage library](http://freeimage.sourceforge.net/download.html). They are `@nogc` and `nothrow` compatible and can be compiled for compatibility with `-betterC`. This package is intended as a replacement of [DerelictFI](https://github.com/DerelictOrg/DerelictFI), which is not compatible with `@nogc`,  `nothrow`, or `-betterC`.
 
 ## Usage
-By default, `bindbc-freeimage` is configured to compile as a dynamic binding that is not `-betterC` compatible. The dynamic binding has no link-time dependency on the FreeImage library, so the FreeImage shared library must be manually loaded at runtime. When configured as a static binding, there is a link-time dependency on the FreeImage library---either the static library or the appropriate file for linking with shared libraries on your platform (see below).
+By default, `bindbc-freeimage` is configured to compile as a dynamic binding that is not `-betterC` compatible. The dynamic binding has no link-time dependency on the FreeImage library, so the FreeImage shared library must be manually loaded at run time. When configured as a static binding, there is a link-time dependency on the FreeImage library---either the static library or the appropriate file for linking with shared libraries on your platform (see below).
 
 When using DUB to manage your project, the static binding can be enabled via a DUB `subConfiguration` statement in your project's package file. `-betterC` compatibility is also enabled via subconfigurations.
 
-To use FreeImage, add `bindbc-freeimage` as a dependency to your project's package config file. For example, the following is configured to FreeImage as a dynamic binding that is not `-betterC` compatible:
+To use FreeImage, add `bindbc-freeimage` as a dependency to your project's package config file. For example, the following is configured to compile FreeImage as a dynamic binding that is not `-betterC` compatible:
 
 __dub.json__
 ```
 dependencies {
-    "bindbc-freeimage": "~>0.1.0",
+    "bindbc-freeimage": "~>1.0.0",
 }
 ```
 
 __dub.sdl__
 ```
-dependency "bindbc-freeimage" version="~>0.1.0"
+dependency "bindbc-freeimage" version="~>1.0.0"
 ```
 
 ### The dynamic binding
-The dynamic binding requires no special configuration when using DUB to manage your project. There is no link-time dependency. At runtime, the FreeImage shared library is required to be on the shared library search path of the user's system. On Windows, this is typically handled by distributing the FreeImage DLL with your program. On other systems, it usually means the user must install the FreeImage runtime library through a package manager.
+The dynamic binding requires no special configuration when using DUB to manage your project. There is no link-time dependency. At run time, the FreeImage shared library is required to be on the shared library search path of the user's system. On Windows, this is typically handled by distributing the FreeImage DLL with your program. On other systems, it usually means the user must install the FreeImage shared library through a package manager.
 
-To load the shared library, you need to call the `loadFreeImage` function. This returns a member of the `FISupport` enumeration (See [the README for `bindbc.loader`](https://github.com/BindBC/bindbc-loader/blob/master/README.md) for the error handling API):
+To load the shared library, you need to call the `loadFreeImage` function. This returns a member of the `FISupport` enumeration (see [the README for `bindbc.loader`](https://github.com/BindBC/bindbc-loader/blob/master/README.md) for the error handling API):
 
 * `FISupport.noLibrary` indicating that the library failed to load (it couldn't be found)
 * `FISupport.badLibrary` indicating that one or more symbols in the library failed to load
@@ -61,23 +61,23 @@ to the executable, only on Windows.
 */
 // version(Windows) loadFreeImage("libs/freeimage.dll")
 ```
-By default, the `bindbc-freeimage` binding is configured to compile to load FreeImage 3.17. This behavior can be overridden via the `-version` compiler switch or the `versions` DUB directive with the desired FreeImage version number. It is recommended that you always select the minimum version you require _and no higher_. In this example, the FreeImage dynamic binding is compiled to support FreeImage 3.18:
+By default, the `bindbc-freeimage` binding is configured to load FreeImage 3.17. This behavior can be overridden via the `-version` compiler switch or the `versions` DUB directive with the desired FreeImage version number. It is recommended that you always select the minimum version you require _and no higher_. In this next example, the FreeImage dynamic binding is compiled to support FreeImage 3.18:
 
 __dub.json__
 ```
 "dependencies": {
-    "bindbc-freeimage": "~>0.1.0"
+    "bindbc-freeimage": "~>1.0.0"
 },
 "versions": ["FI_318"]
 ```
 
 __dub.sdl__
 ```
-dependency "bindbc-freeimage" version="~>0.1.0"
+dependency "bindbc-freeimage" version="~>1.0.0"
 versions "FI_318"
 ```
 
-With this example configuration, `fiSupport == FISupport.fi318`. If FreeImage 3.18 or later is installed on the user's system, `loadFreeImage` will return `FISupport.fi318`. If only FreeImage 3.17 is installed, `loadFreeImage` will return `FISupport.badLibrary`. In this scenario, calling `loadedFreeImageVersion()` will return a `FISupport` member indicating which version of FreeImage, if any, actually loaded. If a lower version was loaded, it's still possible to call functions from that version of FreeImage, but any calls to functions from higher versions will result in a null pointer access. For this reason, it's recommended to always specify your required version of the FreeImage library at compile time and abort when you receive an `FISupport.badLibrary` return value from `loadFreeImage`.
+With this example configuration, `fiSupport == FISupport.fi318` on a successful load. If FreeImage 3.18 or later is installed on the user's system, `loadFreeImage` will return `FISupport.fi318`. If FreeImage 3.17 is found instead, `loadFreeImage` will return `FISupport.badLibrary`. In this scenario, calling `loadedFreeImageVersion()` will return a `FISupport` member indicating which version of FreeImage, if any, actually loaded. If a lower version was loaded, it's still possible to call functions from that version of FreeImage, but any calls to functions from higher versions will result in a null pointer access. For this reason, it's recommended to always specify your required version of the FreeImage library at compile time and abort when you receive an `FISupport.badLibrary` return value from `loadFreeImage`.
 
 No matter which version was configured, the successfully loaded version can be obtained via a call to `loadedFreeImageVersion`. It returns one of the following:
 
@@ -97,21 +97,21 @@ Following are the supported versions of FreeImage, the corresponding version IDs
 ## The static binding
 The static binding has a link-time dependency on either the shared or the static FreeImage library. On Windows, you can link with the static library or, to use the shared library (`freeimage.dll`), with the import library. On other systems, you can link with either the static library or directly with the shared library. This requires the FreeImage development package be installed on your system at compile time, either by compiling the FreeImage source yourself, downloading the FreeImage precompiled binaries for Windows, or installing via a system package manager. [See the FreeImage download page](http://freeimage.sourceforge.net/download.html) for details.
 
-When linking with the static library, there is no runtime dependency on FreeImage. When linking with the shared library (or the import library on Windows), the runtime dependency is the same as the dynamic binding, the difference being that the shared library is no longer loaded manually---loading is handled automatically by the system when the program is launched.
+When linking with the static library, there is no run-time dependency on FreeImage. When linking with the shared library (or the import library on Windows), the run-time dependency is the same as the dynamic binding, the difference being that the shared library is no longer loaded manually&mdash;loading is handled automatically by the system when the program is launched.
 
 Enabling the static binding can be done in two ways.
 
 ### Via the compiler's `-version` switch or DUB's `versions` directive
 Pass the `BindFI_Static` version to the compiler and link with the appropriate library.
 
-When using the compiler command line or a build system that doesn't support DUB, this is the only option. The `-version=BindFI_Static` option should be passed to the compiler when building your program. All of the required C libraries, as well as the `bindbc-freeimage` and `bindbc-loader` static libraries must also be passed to the compiler on the command line or via your build system's configuration.
+Using the compiler command line or a build system that doesn't support DUB, the `-version=BindFI_Static` option should be passed to the compiler when building your program. All of the required C libraries, as well as the `bindbc-freeimage` and `bindbc-loader` static libraries, must also be passed to the compiler on the command line or via your build system's configuration.
 
-When using DUB, its `versions` directive is an option. For example, when using the static binding:
+Using DUB, set the `BindFI_Static` version via its `versions` directive and  the required libraries in the `libs` directive. For example:
 
 __dub.json__
 ```
 "dependencies": {
-    "bindbc-freeimage": "~>0.1.0"
+    "bindbc-freeimage": "~>1.0.0"
 },
 "versions": ["BindFI_Static"],
 "libs": ["freeimage"]
@@ -119,10 +119,12 @@ __dub.json__
 
 __dub.sdl__
 ```
-dependency "bindbc-freeimage" version="~>0.1.0"
+dependency "bindbc-freeimage" version="~>1.0.0"
 versions "BindFI_Static"
 libs "freeimage"
 ```
+
+The above example only links to the FreeImage library, meaning it is linking with either the shared library or, on Windows, the import library for the DLL. When linking with the FreeImage static library, any dependencies it has must also be added to the `libs` directive.
 
 ### Via DUB subconfigurations
 Instead of using DUB's `versions` directive, a `subConfiguration` can be used. Enable the `static` subconfiguration for the `bindbc-freeimage` dependency:
@@ -130,7 +132,7 @@ Instead of using DUB's `versions` directive, a `subConfiguration` can be used. E
 __dub.json__
 ```
 "dependencies": {
-    "bindbc-freeimage": "~>0.1.0"
+    "bindbc-freeimage": "~>1.0.0"
 },
 "subConfigurations": {
     "bindbc-freeimage": "static"
@@ -140,12 +142,12 @@ __dub.json__
 
 __dub.sdl__
 ```
-dependency "bindbc-freeimage" version="~>0.1.0"
+dependency "bindbc-freeimage" version="~>1.0.0"
 subConfiguration "bindbc-freeimage" "static"
 libs "freeimage"
 ```
 
-This has the benefit that it completely excludes from the build any source modules related to the dynamic binding, i.e. they will never be passed to the compiler.
+This has the benefit that it completely excludes from the build any source modules related to the dynamic binding, i.e. they will never be passed to the compiler. When linking with the FreeImage static library, its dependencies must still also be added to the `libs` directive.
 
 ## `betterC` support
 
@@ -154,7 +156,7 @@ This has the benefit that it completely excludes from the build any source modul
 __dub.json__
 ```
 "dependencies": {
-    "bindbc-freeimage": "~>0.1.0"
+    "bindbc-freeimage": "~>1.0.0"
 },
 "subConfigurations": {
     "bindbc-freeimage": "staticBC"
@@ -164,7 +166,7 @@ __dub.json__
 
 __dub.sdl__
 ```
-dependency "bindbc-freeimage" version="~>0.1.0"
+dependency "bindbc-freeimage" version="~>1.0.0"
 subConfiguration "bindbc-freeimage" "staticBC"
 libs "freeimage"
 ```
@@ -184,17 +186,19 @@ On some platforms, the following functions may be disabled by default in the bin
 * `FreeImage_JPEGTransformCombinedU`
 * `FreeImage_JPEGTransformCombinedFromMemory`
 
-If your application requires these functions, there are few steps to take. First, add the version `BindFI_JPEGTransform` to your DUB package configuration or compiler command line.
+`binbc-freeimage` excludes these functions by default. If your application requires these functions, there are a few steps to take.
+
+First, add the version `BindFI_JPEGTransform` to your DUB package configuration or compiler command line.
 
 __dub.json__
 ```
 "versions": ["BindFI_JPEGTransform"],
 ```
-```
 __dub.sdl__
+```
 versions "BindFI_JPEGTransform"
 ```
 
 Next, either ship your application with a version of the FreeImage shared library that supports these functions or inform your users they'll need to compile or install a version that does.
 
-Finally, for robustness you'll want to use the `bindbc-loader` error handling API to filter any errors that arise when these functions are missing so that you may present an error message to your users informing them how to install a properly compiled version of the FreeImage shared library.
+Finally, for robustness, you may want to use the `bindbc-loader` error handling API to filter any errors that arise when these functions are missing so that you may present an error message to your users informing them how to install a properly compiled version of the FreeImage shared library.
