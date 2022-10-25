@@ -18,15 +18,15 @@ enum FISupport {
 
 enum FREEIMAGE_MAJOR_VERSION = 3;
 
-version(FI_317) {
-    enum FREEIMAGE_MINOR_VERSION = 17;
-    enum FREEIMAGE_RELEASE_SERIAL = 0;
-    enum fiSupport = FISupport.fi317;
-}
-else version(FI_318) {
+version(FI_318) {
     enum FREEIMAGE_MINOR_VERSION = 18;
     enum FREEIMAGE_RELEASE_SERIAL = 0;
     enum fiSupport = FISupport.fi318;
+}
+else {
+    enum FREEIMAGE_MINOR_VERSION = 17;
+    enum FREEIMAGE_RELEASE_SERIAL = 0;
+    enum fiSupport = FISupport.fi317;
 }
 
 enum FREEIMAGE_COLORORDER_BGR = 0,
