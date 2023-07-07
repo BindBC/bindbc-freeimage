@@ -1,23 +1,23 @@
 # bindbc-freeimage
-This project provides both static and dynamic bindings to the [FreeImage library](http://freeimage.sourceforge.net/download.html). They are `@nogc` and `nothrow` compatible and can be compiled for compatibility with `-betterC`. This package is intended as a replacement of [DerelictFI](https://github.com/DerelictOrg/DerelictFI), which is not compatible with `@nogc`,  `nothrow`, or `-betterC`.
+This project provides both static and dynamic bindings to the [FreeImage library](http://freeimage.sourceforge.net/download.html). They are `@nogc` and `nothrow` compatible and can be compiled for compatibility with BetterC. This package is intended as a replacement of [DerelictFI](https://github.com/DerelictOrg/DerelictFI), which is not compatible with `@nogc`,  `nothrow`, or BetterC.
 
 ## Usage
-By default, `bindbc-freeimage` is configured to compile as a dynamic binding that is not `-betterC` compatible. The dynamic binding has no link-time dependency on the FreeImage library, so the FreeImage shared library must be manually loaded at run time. When configured as a static binding, there is a link-time dependency on the FreeImage library---either the static library or the appropriate file for linking with shared libraries on your platform (see below).
+By default, `bindbc-freeimage` is configured to compile as a dynamic binding that is not BetterC compatible. The dynamic binding has no link-time dependency on the FreeImage library, so the FreeImage shared library must be manually loaded at run time. When configured as a static binding, there is a link-time dependency on the FreeImage library&mdash;either the static library or the appropriate file for linking with shared libraries on your platform. (see below)
 
-When using DUB to manage your project, the static binding can be enabled via a DUB `subConfiguration` statement in your project's package file. `-betterC` compatibility is also enabled via subconfigurations.
+When using DUB to manage your project, the static binding can be enabled via a DUB `subConfiguration` statement in your project's package file. BetterC compatibility is also enabled via subconfigurations.
 
-To use FreeImage, add `bindbc-freeimage` as a dependency to your project's package config file. For example, the following is configured to compile FreeImage as a dynamic binding that is not `-betterC` compatible:
+To use FreeImage, add `bindbc-freeimage` as a dependency to your project's package config file. For example, the following is configured to compile FreeImage as a dynamic binding that is not BetterC compatible:
 
 __dub.json__
 ```
 dependencies {
-    "bindbc-freeimage": "~>1.0.0",
+    "bindbc-freeimage": "~>1.1.0",
 }
 ```
 
 __dub.sdl__
 ```
-dependency "bindbc-freeimage" version="~>1.0.0"
+dependency "bindbc-freeimage" version="~>1.1.0"
 ```
 
 ### The dynamic binding
@@ -66,14 +66,14 @@ By default, the `bindbc-freeimage` binding is configured to load FreeImage 3.17.
 __dub.json__
 ```
 "dependencies": {
-    "bindbc-freeimage": "~>1.0.0"
+    "bindbc-freeimage": "~>1.1.0"
 },
 "versions": ["FI_318"]
 ```
 
 __dub.sdl__
 ```
-dependency "bindbc-freeimage" version="~>1.0.0"
+dependency "bindbc-freeimage" version="~>1.1.0"
 versions "FI_318"
 ```
 
@@ -111,7 +111,7 @@ Using DUB, set the `BindFI_Static` version via its `versions` directive and  the
 __dub.json__
 ```
 "dependencies": {
-    "bindbc-freeimage": "~>1.0.0"
+    "bindbc-freeimage": "~>1.1.0"
 },
 "versions": ["BindFI_Static"],
 "libs": ["freeimage"]
@@ -119,7 +119,7 @@ __dub.json__
 
 __dub.sdl__
 ```
-dependency "bindbc-freeimage" version="~>1.0.0"
+dependency "bindbc-freeimage" version="~>1.1.0"
 versions "BindFI_Static"
 libs "freeimage"
 ```
@@ -132,7 +132,7 @@ Instead of using DUB's `versions` directive, a `subConfiguration` can be used. E
 __dub.json__
 ```
 "dependencies": {
-    "bindbc-freeimage": "~>1.0.0"
+    "bindbc-freeimage": "~>1.1.0"
 },
 "subConfigurations": {
     "bindbc-freeimage": "static"
@@ -142,7 +142,7 @@ __dub.json__
 
 __dub.sdl__
 ```
-dependency "bindbc-freeimage" version="~>1.0.0"
+dependency "bindbc-freeimage" version="~>1.1.0"
 subConfiguration "bindbc-freeimage" "static"
 libs "freeimage"
 ```
@@ -151,12 +151,12 @@ This has the benefit that it completely excludes from the build any source modul
 
 ## `betterC` support
 
-`betterC` support is enabled via the `dynamicBC` and `staticBC` subconfigurations, for dynamic and static bindings respectively. To enable the static binding with `-betterC` support:
+`betterC` support is enabled via the `dynamicBC` and `staticBC` subconfigurations, for dynamic and static bindings respectively. To enable the static binding with BetterC support:
 
 __dub.json__
 ```
 "dependencies": {
-    "bindbc-freeimage": "~>1.0.0"
+    "bindbc-freeimage": "~>1.1.0"
 },
 "subConfigurations": {
     "bindbc-freeimage": "staticBC"
@@ -166,12 +166,12 @@ __dub.json__
 
 __dub.sdl__
 ```
-dependency "bindbc-freeimage" version="~>1.0.0"
+dependency "bindbc-freeimage" version="~>1.1.0"
 subConfiguration "bindbc-freeimage" "staticBC"
 libs "freeimage"
 ```
 
-When not using DUB to manage your project, first use DUB to compile the BindBC libraries with the `dynamicBC` or `staticBC` configuration, then pass `-betterC` to the compiler when building your project.
+When not using DUB to manage your project, first use DUB to compile the BindBC libraries with the `dynamicBC` or `staticBC` configuration, then pass BetterC to the compiler when building your project.
 
 ## Support for the `JPEGTransform*` functions
 
